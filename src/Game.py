@@ -1,4 +1,4 @@
-# Controller.py
+# Game.py
 
 import random
 from typing import List
@@ -58,10 +58,16 @@ class Game:
 
                 # dealer finishes, observe, and end game
                 reward = self.resolve_game()
-                self.agent.observe(State(current_sum, upcard.rank, current_high_ace), action, reward, State(self.hand.score(), upcard.rank, self.hand.has_high_ace()), True)
+                self.agent.observe(
+                    State(current_sum, upcard.rank, current_high_ace),
+                    action,
+                    reward,
+                    State(self.hand.score(), upcard.rank, self.hand.has_high_ace()),
+                    True
+                )
                 return reward
                 
-            # process hit action
+            # process hit
             self.hand.cards.append(self.deck.pop())
             print(f"hand: {self.hand.str()} = {self.hand.score()}")
 
@@ -69,17 +75,35 @@ class Game:
             if self.hand.score() > 21:
                 print(f"loss: bust with {self.hand.score()}")
                 reward = -1
-                self.agent.observe(State(current_sum, upcard.rank, current_high_ace), action, reward, State(self.hand.score(), upcard.rank, self.hand.has_high_ace()), True)
+                self.agent.observe(
+                    State(current_sum, upcard.rank, current_high_ace),
+                    action,
+                    reward,
+                    State(self.hand.score(), upcard.rank, self.hand.has_high_ace()),
+                    True
+                )
                 return reward
 
             # 21
             if self.hand.score() == 21:
                 reward = self.resolve_game()
-                self.agent.observe(State(current_sum, upcard.rank, current_high_ace), action, reward, State(self.hand.score(), upcard.rank, self.hand.has_high_ace()), True)
+                self.agent.observe(
+                    State(current_sum, upcard.rank, current_high_ace),
+                    action,
+                    reward,
+                    State(self.hand.score(), upcard.rank, self.hand.has_high_ace()),
+                    True
+                )
                 return reward
 
             # observe non-terminal hit
-            self.agent.observe(State(current_sum, upcard.rank, current_high_ace), action, 0, State(self.hand.score(), upcard.rank, self.hand.has_high_ace()), False)
+            self.agent.observe(
+                State(current_sum, upcard.rank, current_high_ace),
+                action,
+                0,
+                State(self.hand.score(), upcard.rank, self.hand.has_high_ace()),
+                False
+            )
 
     # after player stands or hits 21, dealer plays and game is resolved
     def resolve_game(self):
