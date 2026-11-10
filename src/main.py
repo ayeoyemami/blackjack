@@ -2,11 +2,12 @@
 
 import Controller
 import GameState
-from Agents import PlayerAgent, RandomAgent
+from Agents import PlayerAgent, RandomAgent, PlayerObserver
 
-agent = PlayerAgent()
+agent = PlayerObserver()
 # agent = RandomAgent()
 game_state = GameState.GameState()
 controller = Controller.Controller(game_state, agent)
 
-controller.start_game()
+outcome = controller.run()
+print(outcome)
