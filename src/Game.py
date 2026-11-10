@@ -4,107 +4,107 @@ import random
 from typing import List
 
 from Card import Card, Rank, Suit, display_card
-from Hand import hand_sum, display_hand, has_high_ace
+from Hand import Hand
 from Agents import Agent
 from State import State
 
 class Game:
-    hand: List[Card]
-    dealer_hand: List[Card]
-    deck:List[Card]
-
     def __init__(self, agent: Agent):
         self.agent = agent
+        self.hand = Hand()
+        self.dealer_hand = Hand()
+        self.deck = []
 
     def run(self):
-        # fill & shuffle deck, deal initial hands, show upcard and player hand
+        # fill & shuffle deck, deal initial hands
         self.deck = [Card(suit, rank) for suit in Suit for rank in Rank]
         random.shuffle(self.deck)
-        self.hand = [self.deck.pop(), self.deck.pop()]
-        self.dealer_hand = [self.deck.pop(), self.deck.pop()]
+        self.hand.cards = [self.deck.pop(), self.deck.pop()]
+        self.dealer_hand.cards = [self.deck.pop(), self.deck.pop()] 
 
-        upcard = self.dealer_hand[0]
+        # show upcard and player hand
+        upcard = self.dealer_hand.cards[0]
         print(f"upcard: {display_card(upcard)}")
-        print(f"hand: {display_hand(self.hand)} = {hand_sum(self.hand)}")
+        print(f"hand: {self.hand.str()} = {self.hand.score()}")
 
         # resolve initial push (tie)
-        if hand_sum(self.hand) == 21 and hand_sum(self.dealer_hand) == 21:
+        if self.hand.score() == 21 and self.dealer_hand.score() == 21:
             print("push: both have 21")
             return 0
 
         # resolve initial blackjack
-        if hand_sum(self.hand) == 21:
+        if self.hand.score() == 21:
             print("win: blackjack")
             return 1
 
         # resolve initial dealer blackjack
-        if hand_sum(self.dealer_hand) == 21:
-            print(f"dealer hand: {display_hand(self.dealer_hand)} = {hand_sum(self.dealer_hand)}")
+        if self.dealer_hand.score() == 21:
+            print(f"dealer hand: {self.dealer_hand.str()} = {self.dealer_hand.score()}")
             print("loss: dealer blackjack")
             return -1
         
         # game loop
         while True:
             # record sum for observation
-            current_sum = hand_sum(self.hand)
-            current_high_ace = has_high_ace(self.hand)
+            current_sum = self.hand.score()
+            current_high_ace = self.hand.has_high_ace()
 
             # get action from agent
             action = self.agent.get_action(State(current_sum, upcard.rank, current_high_ace))
             
             # process stand
             if action == "stand":
-                print(f"final hand: {display_hand(self.hand)} = {hand_sum(self.hand)}")
+                print(f"final hand: {self.hand.str()} = {self.hand.score()}")
 
                 # dealer finishes, observe, and end game
                 reward = self.resolve_game()
-                self.agent.observe(State(current_sum, upcard.rank, current_high_ace), action, reward, State(hand_sum(self.hand), upcard.rank, has_high_ace(self.hand)), True)
+                self.agent.observe(State(current_sum, upcard.rank, current_high_ace), action, reward, State(self.hand.score(), upcard.rank, self.hand.has_high_ace()), True)
                 return reward
                 
             # process hit action
-            self.hand.append(self.deck.pop())
-            print(f"hand: {display_hand(self.hand)} = {hand_sum(self.hand)}")
+            self.hand.cards.append(self.deck.pop())
+            print(f"hand: {self.hand.str()} = {self.hand.score()}")
 
             # bust
-            if hand_sum(self.hand) > 21:
-                print(f"loss: bust with {hand_sum(self.hand)}")
+            if self.hand.score() > 21:
+                print(f"loss: bust with {self.hand.score()}")
                 reward = -1
-                self.agent.observe(State(current_sum, upcard.rank, current_high_ace), action, reward, State(hand_sum(self.hand), upcard.rank, has_high_ace(self.hand)), True)
+                self.agent.observe(State(current_sum, upcard.rank, current_high_ace), action, reward, State(self.hand.score(), upcard.rank, self.hand.has_high_ace()), True)
                 return reward
 
             # 21
-            if hand_sum(self.hand) == 21:
+            if self.hand.score() == 21:
                 reward = self.resolve_game()
-                self.agent.observe(State(current_sum, upcard.rank, current_high_ace), action, reward, State(hand_sum(self.hand), upcard.rank, has_high_ace(self.hand)), True)
+                self.agent.observe(State(current_sum, upcard.rank, current_high_ace), action, reward, State(self.hand.score(), upcard.rank, self.hand.has_high_ace()), True)
                 return reward
 
             # observe non-terminal hit
-            self.agent.observe(State(current_sum, upcard.rank, current_high_ace), action, 0, State(hand_sum(self.hand), upcard.rank, has_high_ace(self.hand)), False)
+            self.agent.observe(State(current_sum, upcard.rank, current_high_ace), action, 0, State(self.hand.score(), upcard.rank, self.hand.has_high_ace()), False)
 
     # after player stands or hits 21, dealer plays and game is resolved
     def resolve_game(self):
         # dealer finishes
-        while hand_sum(self.dealer_hand) < 17:
-            self.dealer_hand.append(self.deck.pop())
+        while self.dealer_hand.score() < 17:
+            self.dealer_hand.cards.append(self.deck.pop())
 
-        print(f"dealer ending hand: {display_hand(self.dealer_hand)} = {hand_sum(self.dealer_hand)}")
+        print(f"dealer ending hand: {self.dealer_hand.str()} = {self.dealer_hand.score()}")
 
         # win b/c dealer bust
-        if hand_sum(self.dealer_hand) > 21:
-            print(f"win: dealer bust with {hand_sum(self.dealer_hand)}")
+        if self.dealer_hand.score() > 21:
+            print(f"win: dealer bust with {self.dealer_hand.score()}")
             return 1
 
         # loss b/c dealer has higher hand
-        if hand_sum(self.dealer_hand) > hand_sum(self.hand):
-            print(f"loss: {hand_sum(self.dealer_hand)} > {hand_sum(self.hand)}")
+        if self.dealer_hand.score() > self.hand.score():
+            print(f"loss: {self.dealer_hand.score()} > {self.hand.score()}")
             return -1
 
         # win b/c dealer has lower hand
-        elif hand_sum(self.dealer_hand) < hand_sum(self.hand):
-            print(f"win: {hand_sum(self.hand)} > {hand_sum(self.dealer_hand)}")
+        elif self.dealer_hand.score() < self.hand.score():
+            print(f"win: {self.hand.score()} > {self.dealer_hand.score()}")
             return 1
 
         # push b/c hands equal
-        elif hand_sum(self.dealer_hand) == hand_sum(self.hand):
-            print(f"push: {hand_sum(self.hand)}")
+        elif self.dealer_hand.score() == self.hand.score():
+            print(f"push: {self.hand.score()}")
             return 0
