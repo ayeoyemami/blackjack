@@ -1,6 +1,6 @@
 # main.py
 
 from Game import Game
-from Agents import PlayerAgent, RandomAgent, PlayerObserver
+from Agents import PlayerAgent, RandomAgent, PlayerLoggerAgent
 
-Game(PlayerObserver()).run()
+Game(PlayerLoggerAgent()).run()

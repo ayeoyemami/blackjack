@@ -20,7 +20,7 @@ class PlayerAgent(Agent):
 
 # this class uses player input
 # observe() records results to a file so we can compare our agents to our human gameplay
-class PlayerObserver(Agent):
+class PlayerLoggerAgent(Agent):
     def get_action(self, state):
         input_action = input("input: ").strip().lower()
         if input_action in ["hit", "stand"]:

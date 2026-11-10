@@ -5,6 +5,6 @@ from Card import Rank
 
 @dataclass
 class State:
-    hand_sum: int
+    hand_score: int
     upcard_rank: Rank
     has_high_ace: bool
