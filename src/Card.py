@@ -2,7 +2,6 @@
 
 from enum import Enum, auto
 from dataclasses import dataclass
-from typing import List
 
 class Suit(Enum):
     Hearts = auto()
@@ -31,13 +30,13 @@ class Card:
     rank: Rank
 
 def get_value(card: Card) -> int:
-
     # face cards worth 10
     if card.rank in {Rank.Jack, Rank.Queen, Rank.King}:
         return 10
     
-    # assuming aces is 11 for this project
+    # ace is 1 or 11
     elif card.rank == Rank.Ace:
+        # get_hand_sum depends on this returning 11
         return 11
 
     # number cards worth their rank
@@ -63,7 +62,3 @@ def display_card(card: Card) -> str:
     }[card.suit]
 
     return f"{rank_display}{suit_display}"
-
-# string representation of a hand
-def display_hand(hand: List[Card]) -> str:
-    return ', '.join(display_card(card) for card in hand)

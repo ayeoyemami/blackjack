@@ -1,6 +1,6 @@
 # Agents.py
 
-from Card import get_value
+import random
 
 # parent class
 class Agent:
@@ -27,10 +27,9 @@ class PlayerObserver(Agent):
 
     def observe(self, state, action, reward, next_state, done):
         with open("game_results.csv", "a") as f:
-            f.write(f"{state['hand_sum']},{get_value(state['upcard'])},{action},{reward},{next_state['hand_sum']},{get_value(next_state['upcard'])},{done}\n")
+            f.write(f"{state['hand_sum']},{state['upcard'].rank.name},{action},{reward},{next_state['hand_sum']},{next_state['upcard'].rank.name},{done}\n")
 
 # subclass for random agent
 class RandomAgent(Agent):
     def get_action(self, state):
-        import random
         return random.choice(["hit", "stand"])
