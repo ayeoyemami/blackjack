@@ -14,21 +14,25 @@ class Agent:
 # subclass for player agent
 class PlayerAgent(Agent):
     def get_action(self, state):
-        input_action = input("input: ").strip().lower()
-        if input_action in ["hit", "stand"]:
-            return input_action 
+        input_action = None
+        while input_action not in ["hit", "stand"]:
+            input_action = input("input: ").strip().lower()
+        
+        return input_action 
 
 # this class uses player input
 # observe() records results to a file so we can compare our agents to our human gameplay
 class PlayerLoggerAgent(Agent):
     def get_action(self, state):
-        input_action = input("input: ").strip().lower()
-        if input_action in ["hit", "stand"]:
-            return input_action
+        input_action = None
+        while input_action not in ["hit", "stand"]:
+            input_action = input("input: ").strip().lower()
+        
+        return input_action 
 
     def observe(self, state: State, action, reward, next_state: State, done):
         with open("game_results.csv", "a") as f:
-            f.write(f"{state.hand_sum},{state.upcard_rank.name},{state.has_high_ace},{action},{reward},{next_state.hand_sum},{next_state.upcard_rank.name},{next_state.has_high_ace},{done}\n")
+            f.write(f"{state.hand_score},{state.upcard_rank.name},{state.has_high_ace},{action},{reward},{next_state.hand_score},{next_state.upcard_rank.name},{next_state.has_high_ace},{done}\n")
 
 # subclass for random agent
 class RandomAgent(Agent):
