@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from Card import Rank
 
-@dataclass
+@dataclass(frozen=True)
 class State:
     hand_score: int
     upcard_rank: Rank
