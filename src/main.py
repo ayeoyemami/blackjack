@@ -1,13 +1,10 @@
 # main.py
 
-import Controller
-import GameState
+import Game
 from Agents import PlayerAgent, RandomAgent, PlayerObserver
 
 agent = PlayerObserver()
-# agent = RandomAgent()
-game_state = GameState.GameState()
-controller = Controller.Controller(game_state, agent)
+game = Game.Game(agent)
 
-outcome = controller.run()
+outcome = game.run()
 print(outcome)
