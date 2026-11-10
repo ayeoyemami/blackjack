@@ -8,7 +8,7 @@ class Agent:
         raise NotImplementedError("subclass must implement this method. agent parent class should not be used")
 
     def observe(self, state, action, reward, next_state, done):
-        raise NotImplementedError("subclass must implement this method. agent parent class should not be used")
+        pass
 
 # subclass for player agent
 class PlayerAgent(Agent):
@@ -16,9 +16,6 @@ class PlayerAgent(Agent):
         input_action = input("input: ").strip().lower()
         if input_action in ["hit", "stand"]:
             return input_action 
-
-    def observe(self, state, action, reward, next_state, done):
-        pass
 
 # this class uses player input
 # observe() records results to a file so we can compare our agents to our human gameplay
