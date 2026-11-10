@@ -1,13 +1,13 @@
 # Hand.py
 
 from typing import List
-from Card import Card, Rank, get_value, display_card
+from Card import Card, Rank
 
 class Hand:
     cards: List[Card]
 
     def score(self) -> int:
-        total = sum(get_value(card) for card in self.cards)
+        total = sum(card.value() for card in self.cards)
         high_ace_count = sum(card.rank == Rank.Ace for card in self.cards)
 
         while total > 21 and high_ace_count:
@@ -17,7 +17,7 @@ class Hand:
         return total
 
     def has_high_ace(self) -> bool:
-        total = sum(get_value(card) for card in self.cards)
+        total = sum(card.value() for card in self.cards)
         high_ace_count = sum(card.rank == Rank.Ace for card in self.cards)
 
         while total > 21 and high_ace_count:
@@ -28,4 +28,4 @@ class Hand:
 
     # string representation of a hand
     def str(self) -> str:
-        return ', '.join(display_card(card) for card in self.cards)
+        return ', '.join(card.str() for card in self.cards)

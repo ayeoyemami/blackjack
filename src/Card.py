@@ -24,41 +24,41 @@ class Rank(Enum):
     King = 13
     Ace = 14
 
-@dataclass
+@dataclass(frozen=True)
 class Card:
     suit: Suit
     rank: Rank
 
-def get_value(card: Card) -> int:
-    # face cards worth 10
-    if card.rank in {Rank.Jack, Rank.Queen, Rank.King}:
-        return 10
-    
-    # ace is 1 or 11
-    elif card.rank == Rank.Ace:
-        # get_hand_sum depends on this returning 11
-        return 11
+    def value(self) -> int:
+        # face cards worth 10
+        if self.rank in {Rank.Jack, Rank.Queen, Rank.King}:
+            return 10
+        
+        # ace is 1 or 11
+        elif self.rank == Rank.Ace:
+            # get_hand_sum depends on this returning 11
+            return 11
 
-    # number cards worth their rank
-    else:
-        return card.rank.value
+        # number cards worth their rank
+        else:
+            return self.rank.value
 
-# string representation of a card
-# rank as digit for numbers, letter for face cards, and A for ace
-# suit as symbols ♥ ♦ ♣ ♠
-def display_card(card: Card) -> str:
-    if card.rank in {Rank.Jack, Rank.Queen, Rank.King}:
-        rank_display = card.rank.name[0]  # J, Q, K
-    elif card.rank == Rank.Ace:
-        rank_display = 'A'
-    else:
-        rank_display = str(card.rank.value)
+    # string representation of a card
+    # rank as digit for numbers, letter for face cards, and A for ace
+    # suit as symbols ♥ ♦ ♣ ♠
+    def str(self) -> str:
+        if self.rank in {Rank.Jack, Rank.Queen, Rank.King}:
+            rank_str = self.rank.name[0]  # J, Q, K
+        elif self.rank == Rank.Ace:
+            rank_str = 'A'
+        else:
+            rank_str = str(self.rank.value)
 
-    suit_display = {
-        Suit.Hearts: '♥',
-        Suit.Diamonds: '♦',
-        Suit.Clubs: '♣',
-        Suit.Spades: '♠'
-    }[card.suit]
+        suit_str = {
+            Suit.Hearts: '♥',
+            Suit.Diamonds: '♦',
+            Suit.Clubs: '♣',
+            Suit.Spades: '♠'
+        }[self.suit]
 
-    return f"{rank_display}{suit_display}"
+        return f"{rank_str}{suit_str}"

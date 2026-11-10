@@ -1,9 +1,8 @@
 # Game.py
 
 import random
-from typing import List
 
-from Card import Card, Rank, Suit, display_card
+from Card import Card, Rank, Suit
 from Hand import Hand
 from Agents import Agent
 from State import State
@@ -24,7 +23,7 @@ class Game:
 
         # show upcard and player hand
         upcard = self.dealer_hand.cards[0]
-        print(f"upcard: {display_card(upcard)}")
+        print(f"upcard: {upcard.str()}")
         print(f"hand: {self.hand.str()} = {self.hand.score()}")
 
         # resolve initial push (tie)

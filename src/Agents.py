@@ -1,7 +1,7 @@
 # Agents.py
 
 import random
-import State
+from State import State
 
 # parent class
 class Agent:
