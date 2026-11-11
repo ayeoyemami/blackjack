@@ -8,8 +8,9 @@ from Agents import Agent
 from State import State
 
 class Game:
-    def __init__(self, agent: Agent):
+    def __init__(self, agent: Agent, output):
         self.agent = agent
+        self.output = output
         self.hand = Hand()
         self.dealer_hand = Hand()
         self.deck = []
@@ -23,23 +24,23 @@ class Game:
 
         # show upcard and player hand
         upcard = self.dealer_hand.cards[0]
-        print(f"upcard: {upcard.str()}")
-        print(f"hand: {self.hand.str()} = {self.hand.score()}")
+        self.output(f"upcard: {upcard.str()}")
+        self.output(f"hand: {self.hand.str()} = {self.hand.score()}")
 
         # resolve initial push (tie)
         if self.hand.score() == 21 and self.dealer_hand.score() == 21:
-            print("push: both have 21")
+            self.output("push: both have 21")
             return 0
 
         # resolve initial blackjack
         if self.hand.score() == 21:
-            print("win: blackjack")
+            self.output("win: blackjack")
             return 1
 
         # resolve initial dealer blackjack
         if self.dealer_hand.score() == 21:
-            print(f"dealer hand: {self.dealer_hand.str()} = {self.dealer_hand.score()}")
-            print("loss: dealer blackjack")
+            self.output(f"dealer hand: {self.dealer_hand.str()} = {self.dealer_hand.score()}")
+            self.output("loss: dealer blackjack")
             return -1
         
         # game loop
@@ -53,7 +54,7 @@ class Game:
             
             # process stand
             if action == "stand":
-                print(f"final hand: {self.hand.str()} = {self.hand.score()}")
+                self.output(f"final hand: {self.hand.str()} = {self.hand.score()}")
 
                 # dealer finishes, observe, and end game
                 reward = self.resolve_game()
@@ -68,11 +69,11 @@ class Game:
                 
             # process hit
             self.hand.cards.append(self.deck.pop())
-            print(f"hand: {self.hand.str()} = {self.hand.score()}")
+            self.output(f"hand: {self.hand.str()} = {self.hand.score()}")
 
             # bust
             if self.hand.score() > 21:
-                print(f"loss: bust with {self.hand.score()}")
+                self.output(f"loss: bust with {self.hand.score()}")
                 reward = -1
                 self.agent.observe(
                     State(current_sum, upcard.rank, current_high_ace),
@@ -110,24 +111,24 @@ class Game:
         while self.dealer_hand.score() < 17:
             self.dealer_hand.cards.append(self.deck.pop())
 
-        print(f"dealer ending hand: {self.dealer_hand.str()} = {self.dealer_hand.score()}")
+        self.output(f"dealer ending hand: {self.dealer_hand.str()} = {self.dealer_hand.score()}")
 
         # win b/c dealer bust
         if self.dealer_hand.score() > 21:
-            print(f"win: dealer bust with {self.dealer_hand.score()}")
+            self.output(f"win: dealer bust with {self.dealer_hand.score()}")
             return 1
 
         # loss b/c dealer has higher hand
         if self.dealer_hand.score() > self.hand.score():
-            print(f"loss: {self.dealer_hand.score()} > {self.hand.score()}")
+            self.output(f"loss: {self.dealer_hand.score()} > {self.hand.score()}")
             return -1
 
         # win b/c dealer has lower hand
         elif self.dealer_hand.score() < self.hand.score():
-            print(f"win: {self.hand.score()} > {self.dealer_hand.score()}")
+            self.output(f"win: {self.hand.score()} > {self.dealer_hand.score()}")
             return 1
 
         # push b/c hands equal
         elif self.dealer_hand.score() == self.hand.score():
-            print(f"push: {self.hand.score()}")
+            self.output(f"push: {self.hand.score()}")
             return 0

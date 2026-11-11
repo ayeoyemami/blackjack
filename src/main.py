@@ -3,4 +3,6 @@
 from Game import Game
 from Agents import PlayerAgent, RandomAgent, PlayerLoggerAgent
 
-Game(PlayerLoggerAgent()).run()
+while True:
+    print("---NEW GAME---")
+    Game(PlayerLoggerAgent(), print).run()
