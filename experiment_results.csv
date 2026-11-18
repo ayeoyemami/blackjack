@@ -1,0 +1,13 @@
+algorithm,schedule,seed,wins,losses,draws,win_rate,average_reward
+Q-learning,fixed,42,2161,2438,401,43.22,-0.0554
+Q-learning,fixed,123,2134,2503,363,42.68,-0.0738
+Q-learning,fixed,456,2079,2513,408,41.58,-0.0868
+Q-learning,decay,42,2087,2552,361,41.74,-0.093
+Q-learning,decay,123,2082,2553,365,41.64,-0.0942
+Q-learning,decay,456,2137,2473,390,42.74,-0.0672
+SARSA,fixed,42,2127,2457,416,42.54,-0.066
+SARSA,fixed,123,2146,2481,373,42.92,-0.067
+SARSA,fixed,456,2086,2516,398,41.72,-0.086
+SARSA,decay,42,2141,2464,395,42.82,-0.0646
+SARSA,decay,123,2175,2463,362,43.5,-0.0576
+SARSA,decay,456,2063,2497,440,41.260000000000005,-0.0868
