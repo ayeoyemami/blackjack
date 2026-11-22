@@ -29,14 +29,17 @@ def train_agent(agent, episodes):
         if episode in EVALUATION_CHECKPOINTS:
             random_state = random.getstate()
 
-            wins, _, _ = evaluate_agent(agent, 1000)
+            wins, losses, pushes = evaluate_agent(agent, 1000)
 
             random.setstate(random_state)
 
             win_rate = wins / 1000 * 100
-            history.append((episode, win_rate))
+            history.append((episode, wins, losses, pushes, win_rate))
 
-            print(f"Episode {episode}: {win_rate:.2f}%")
+            print(
+                f"Episode {episode}: {wins} wins, {losses} losses, "
+                f"{pushes} pushes ({win_rate:.2f}% win rate)"
+            )
 
             # Resume training after evaluation
             agent.training = True
@@ -51,11 +54,14 @@ def evaluate_random_baseline(agent, episodes):
         if episode > episodes:
             break
 
-        wins, _, _ = evaluate_agent(agent, 1000)
+        wins, losses, pushes = evaluate_agent(agent, 1000)
         win_rate = wins / 1000 * 100
-        history.append((episode, win_rate))
+        history.append((episode, wins, losses, pushes, win_rate))
 
-        print(f"Episode {episode}: {win_rate:.2f}%")
+        print(
+            f"Episode {episode}: {wins} wins, {losses} losses, "
+            f"{pushes} pushes ({win_rate:.2f}% win rate)"
+        )
 
     return history
 
@@ -66,7 +72,7 @@ def evaluate_agent(agent, episodes):
 
     wins = 0
     losses = 0
-    draws = 0
+    pushes = 0
 
     for _ in range(episodes):
         reset_agent(agent)
@@ -77,9 +83,9 @@ def evaluate_agent(agent, episodes):
         elif reward == -1:
             losses += 1
         else:
-            draws += 1
+            pushes += 1
 
-    return wins, losses, draws
+    return wins, losses, pushes
 
 
 def run_experiments():
@@ -107,12 +113,12 @@ def run_experiments():
             else:
                 history = evaluate_random_baseline(agent, training_episodes)
 
-            for episode, win_rate in history:
+            for episode, wins, losses, pushes, win_rate in history:
                 learning_results.append([
-                    name, seed, episode, win_rate
+                    name, seed, episode, wins, losses, pushes, win_rate
                 ])
 
-            wins, losses, draws = evaluate_agent(
+            wins, losses, pushes = evaluate_agent(
                 agent, evaluation_episodes
             )
 
@@ -121,12 +127,13 @@ def run_experiments():
 
             results.append([
                 name, seed,
-                wins, losses, draws,
+                wins, losses, pushes,
                 win_rate, average_reward
             ])
 
             print(
                 f"{name} | seed {seed} | "
+                f"{wins} wins, {losses} losses, {pushes} pushes | "
                 f"Final win rate: {win_rate:.2f}%"
             )
 
@@ -135,7 +142,7 @@ def run_experiments():
         writer = csv.writer(file)
         writer.writerow([
             "algorithm", "seed",
-            "wins", "losses", "draws",
+            "wins", "losses", "pushes",
             "win_rate", "average_reward"
         ])
         writer.writerows(results)
@@ -145,7 +152,7 @@ def run_experiments():
         writer = csv.writer(file)
         writer.writerow([
             "algorithm", "seed",
-            "episode", "win_rate"
+            "episode", "wins", "losses", "pushes", "win_rate"
         ])
         writer.writerows(learning_results)
 

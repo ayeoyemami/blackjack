@@ -1,4 +1,4 @@
-algorithm,seed,wins,losses,draws,win_rate,average_reward
+algorithm,seed,wins,losses,pushes,win_rate,average_reward
 Q-learning,42,419,506,75,41.9,-0.087
 Q-learning,123,404,521,75,40.400000000000006,-0.117
 Q-learning,456,405,515,80,40.5,-0.11
