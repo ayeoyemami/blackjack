@@ -11,21 +11,19 @@ def reset_agent(agent):
         agent.next_action = None
 
 
-def train_agent(agent, episodes, schedule):
+def train_agent(agent, episodes):
     agent.training = True
     history = []
 
     for i in range(episodes):
-        if schedule == "fixed":
-            agent.epsilon = 0.1
-        else:
-            agent.epsilon = max(0.05, 0.3 * (0.9995 ** i))
+        agent.epsilon = 0.1
 
         reset_agent(agent)
         Game(agent, lambda message: None).run()
 
-        # Evaluate the agent every 1000 episodes
-        if (i + 1) % 1000 == 0:
+        # Evaluate every 100 episodes through episode 1000, then every 1000.
+        episode = i + 1
+        if episode in [1, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1500, 2000, 3000, 4000, 5000]:
             random_state = random.getstate()
 
             wins, losses, draws = evaluate_agent(agent, 1000)
@@ -33,9 +31,9 @@ def train_agent(agent, episodes, schedule):
             random.setstate(random_state)
 
             win_rate = wins / 1000 * 100
-            history.append((i + 1, win_rate))
+            history.append((episode, win_rate))
 
-            print(f"Episode {i + 1}: {win_rate:.2f}%")
+            print(f"Episode {episode}: {win_rate:.2f}%")
 
             # Resume training after evaluation
             agent.training = True
@@ -66,73 +64,67 @@ def evaluate_agent(agent, episodes):
 
 
 def run_experiments():
-    training_episodes = 10000
-    evaluation_episodes = 5000
+    training_episodes = 5000
+    evaluation_episodes = 1000
     seeds = [42, 123, 456]
 
     results = []
     learning_results = []
 
-    for name, agent_class in [
-        ("Q-learning", QLearningAgent),
-        ("SARSA", SARSAAgent)
-    ]:
-        for schedule in ["fixed", "decay"]:
-            for seed in seeds:
-                random.seed(seed)
-                agent = agent_class()
+    for name, agent_class in [("Q-learning", QLearningAgent), ("SARSA", SARSAAgent)]:
+        for seed in seeds:
+            random.seed(seed)
+            agent = agent_class()
 
-                print(f"\nTraining {name} | {schedule} | seed {seed}")
+            print(f"\nTraining {name} | seed {seed}")
 
-                history = train_agent(
-                    agent, training_episodes, schedule
-                )
+            history = train_agent(agent, training_episodes)
 
-                for episode, win_rate in history:
-                    learning_results.append([
-                        name, schedule, seed, episode, win_rate
-                    ])
-
-                wins, losses, draws = evaluate_agent(
-                    agent, evaluation_episodes
-                )
-
-                win_rate = wins / evaluation_episodes * 100
-                average_reward = (wins - losses) / evaluation_episodes
-
-                results.append([
-                    name, schedule, seed,
-                    wins, losses, draws,
-                    win_rate, average_reward
+            for episode, win_rate in history:
+                learning_results.append([
+                    name, seed, episode, win_rate
                 ])
 
-                print(
-                    f"{name} | {schedule} | seed {seed} | "
-                    f"Final win rate: {win_rate:.2f}%"
-                )
+            wins, losses, draws = evaluate_agent(
+                agent, evaluation_episodes
+            )
+
+            win_rate = wins / evaluation_episodes * 100
+            average_reward = (wins - losses) / evaluation_episodes
+
+            results.append([
+                name, seed,
+                wins, losses, draws,
+                win_rate, average_reward
+            ])
+
+            print(
+                f"{name} | seed {seed} | "
+                f"Final win rate: {win_rate:.2f}%"
+            )
 
     # saving final evaluation results
-    with open("experiment_results.csv", "w", newline="") as file:
+    with open("data/experiment_results.csv", "w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow([
-            "algorithm", "schedule", "seed",
+            "algorithm", "seed",
             "wins", "losses", "draws",
             "win_rate", "average_reward"
         ])
         writer.writerows(results)
 
     # saving learning curve results
-    with open("learning_curves.csv", "w", newline="") as file:
+    with open("data/learning_curves.csv", "w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow([
-            "algorithm", "schedule", "seed",
+            "algorithm", "seed",
             "episode", "win_rate"
         ])
         writer.writerows(learning_results)
 
     print("\nExperiments completed!")
-    print("Results saved to experiment_results.csv")
-    print("Learning curves saved to learning_curves.csv")
+    print("Results saved to data/experiment_results.csv")
+    print("Learning curves saved to data/learning_curves.csv")
 
 
 if __name__ == "__main__":
