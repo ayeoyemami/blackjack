@@ -2,7 +2,10 @@ import csv
 import random
 
 from Game import Game
+from Agents import RandomAgent
 from RLAgents import QLearningAgent, SARSAAgent
+
+EVALUATION_CHECKPOINTS = (1, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1500, 2000, 3000, 4000, 5000,)
 
 
 def reset_agent(agent):
@@ -23,10 +26,10 @@ def train_agent(agent, episodes):
 
         # Evaluate every 100 episodes through episode 1000, then every 1000.
         episode = i + 1
-        if episode in [1, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1500, 2000, 3000, 4000, 5000]:
+        if episode in EVALUATION_CHECKPOINTS:
             random_state = random.getstate()
 
-            wins, losses, draws = evaluate_agent(agent, 1000)
+            wins, _, _ = evaluate_agent(agent, 1000)
 
             random.setstate(random_state)
 
@@ -37,6 +40,22 @@ def train_agent(agent, episodes):
 
             # Resume training after evaluation
             agent.training = True
+
+    return history
+
+
+def evaluate_random_baseline(agent, episodes):
+    history = []
+
+    for episode in EVALUATION_CHECKPOINTS:
+        if episode > episodes:
+            break
+
+        wins, _, _ = evaluate_agent(agent, 1000)
+        win_rate = wins / 1000 * 100
+        history.append((episode, win_rate))
+
+        print(f"Episode {episode}: {win_rate:.2f}%")
 
     return history
 
@@ -71,14 +90,22 @@ def run_experiments():
     results = []
     learning_results = []
 
-    for name, agent_class in [("Q-learning", QLearningAgent), ("SARSA", SARSAAgent)]:
+    for name, agent_class, should_train in [
+        ("Q-learning", QLearningAgent, True),
+        ("SARSA", SARSAAgent, True),
+        ("Random", RandomAgent, False),
+    ]:
         for seed in seeds:
             random.seed(seed)
             agent = agent_class()
 
-            print(f"\nTraining {name} | seed {seed}")
+            action = "Training" if should_train else "Evaluating"
+            print(f"\n{action} {name} | seed {seed}")
 
-            history = train_agent(agent, training_episodes)
+            if should_train:
+                history = train_agent(agent, training_episodes)
+            else:
+                history = evaluate_random_baseline(agent, training_episodes)
 
             for episode, win_rate in history:
                 learning_results.append([
