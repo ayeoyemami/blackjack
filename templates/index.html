@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blackjack RL</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- ── Header ─────────────────────────────────────────────────────────── -->
+  <header>
+    <h1>&#9824; Blackjack RL &#9829;</h1>
+    <p class="subtitle">Reinforcement learning meets the casino</p>
+  </header>
+
+  <!-- ── Mode selector ──────────────────────────────────────────────────── -->
+  <div class="mode-bar">
+    <button class="mode-btn active" data-mode="human">&#128100; Play</button>
+    <button class="mode-btn"        data-mode="qlearning">&#129302; Watch Q-Learning</button>
+    <button class="mode-btn"        data-mode="sarsa">&#129302; Watch SARSA</button>
+    <button class="mode-btn"        data-mode="results">&#128202; Results</button>
+  </div>
+
+  <!-- ── Main content ───────────────────────────────────────────────────── -->
+  <main>
+
+    <!-- Game table (shown in human / AI watch modes) -->
+    <section id="game-section">
+
+      <div class="table-felt">
+
+        <!-- Dealer area -->
+        <div class="hand-area" id="dealer-area">
+          <div class="hand-label">
+            <span>DEALER</span>
+            <span class="score" id="dealer-score"></span>
+          </div>
+          <div class="cards" id="dealer-cards"></div>
+        </div>
+
+        <!-- Outcome banner -->
+        <div class="outcome-banner hidden" id="outcome-banner"></div>
+
+        <!-- Player area -->
+        <div class="hand-area" id="player-area">
+          <div class="hand-label">
+            <span>PLAYER</span>
+            <span class="score" id="player-score"></span>
+          </div>
+          <div class="cards" id="player-cards"></div>
+        </div>
+
+      </div><!-- .table-felt -->
+
+      <!-- Human controls -->
+      <div class="controls" id="human-controls">
+        <button id="btn-new"   class="ctrl-btn primary">New Game</button>
+        <button id="btn-hit"   class="ctrl-btn" disabled>Hit</button>
+        <button id="btn-stand" class="ctrl-btn" disabled>Stand</button>
+      </div>
+
+      <!-- AI watch controls -->
+      <div class="controls hidden" id="ai-controls">
+        <button id="btn-ai-new" class="ctrl-btn primary">New Game</button>
+        <div class="speed-control">
+          <label>Speed
+            <input type="range" id="speed-slider"
+                   min="200" max="1500" value="700" step="100" />
+          </label>
+          <span id="speed-label">0.7 s / move</span>
+        </div>
+      </div>
+
+      <!-- Session stats bar -->
+      <div class="session-stats">
+        <span class="stat win">W <strong id="stat-w">0</strong></span>
+        <span class="stat loss">L <strong id="stat-l">0</strong></span>
+        <span class="stat push">P <strong id="stat-p">0</strong></span>
+        <span class="stat rate">Win rate <strong id="stat-rate">—</strong></span>
+      </div>
+
+    </section><!-- #game-section -->
+
+    <!-- Results panel (shown when "Results" mode is active) -->
+    <section id="results-section" class="hidden">
+
+      <h2>Experiment Results</h2>
+      <p class="results-note">
+        From <code>train_agents.py</code> — 10 000 training episodes,
+        5 000 evaluation episodes, averaged over 3 random seeds.
+      </p>
+
+      <div class="results-table-wrap">
+        <table id="results-table">
+          <thead>
+            <tr>
+              <th>Algorithm</th><th>Schedule</th><th>Seed</th>
+              <th>Wins</th><th>Losses</th><th>Draws</th>
+              <th>Win Rate</th><th>Avg Reward</th>
+            </tr>
+          </thead>
+          <tbody id="results-tbody"></tbody>
+        </table>
+      </div>
+
+      <h2>Learning Curves</h2>
+      <p class="results-note">
+        Win rate evaluated every 1 000 training episodes.
+        Shaded bands show min–max range across seeds.
+      </p>
+      <canvas id="curves-canvas" width="800" height="380"></canvas>
+
+    </section><!-- #results-section -->
+
+  </main>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
