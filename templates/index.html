@@ -8,14 +8,67 @@
 </head>
 <body>
 
+  <!-- ── Start / intro page ────────────────────────────────────────────── -->
+  <div id="start-page">
+
+    <div class="start-inner">
+      <div class="start-suits">&#9824; &#9829; &#9830; &#9827;</div>
+      <h1>Blackjack RL</h1>
+      <p class="start-tagline">Reinforcement learning meets the casino</p>
+
+      <div class="start-sections">
+
+        <!-- How to play -->
+        <div class="start-card">
+          <h2>&#127183; How to Play</h2>
+          <ul>
+            <li>You and the dealer are each dealt <strong>two cards</strong>. The dealer's first card is face‑down.</li>
+            <li>Cards 2–10 are worth their number. Face cards (J, Q, K) are worth <strong>10</strong>. Aces are worth <strong>1 or 11</strong>.</li>
+            <li><strong>Hit</strong> to draw another card. <strong>Stand</strong> to keep your hand.</li>
+            <li>Get closer to <strong>21</strong> than the dealer without going over.</li>
+            <li>Going over 21 is a <strong>bust</strong> — instant loss.</li>
+            <li>The dealer must draw until their hand is at least <strong>17</strong>.</li>
+          </ul>
+        </div>
+
+        <!-- The RL project -->
+        <div class="start-card">
+          <h2>&#129302; The RL Agents</h2>
+          <ul>
+            <li>Two algorithms were trained to play: <strong>Q-Learning</strong> and <strong>SARSA</strong>.</li>
+            <li>Both explore the game state space — defined by the player's score, the dealer's upcard, and whether an Ace is high.</li>
+            <li><strong>Q-Learning</strong> (off-policy) learns the best possible action regardless of how it explores.</li>
+            <li><strong>SARSA</strong> (on-policy) learns from the actions it actually takes while exploring.</li>
+            <li>Each agent was trained for <strong>10 000 episodes</strong> and evaluated on <strong>5 000 games</strong>.</li>
+          </ul>
+        </div>
+
+        <!-- Modes -->
+        <div class="start-card">
+          <h2>&#127918; What You Can Do</h2>
+          <ul>
+            <li><strong>Play</strong> — test your own strategy against the house.</li>
+            <li><strong>Watch Q-Learning</strong> — see the trained Q-Learning agent play in real time.</li>
+            <li><strong>Watch SARSA</strong> — see the trained SARSA agent play in real time.</li>
+            <li><strong>Results</strong> — view the training statistics and win-rate learning curves.</li>
+          </ul>
+        </div>
+
+      </div><!-- .start-sections -->
+
+      <button id="btn-start" class="start-btn">Enter the Table &#8594;</button>
+    </div>
+
+  </div><!-- #start-page -->
+
   <!-- ── Header ─────────────────────────────────────────────────────────── -->
-  <header>
+  <header class="hidden">
     <h1>&#9824; Blackjack RL &#9829;</h1>
     <p class="subtitle">Reinforcement learning meets the casino</p>
   </header>
 
   <!-- ── Mode selector ──────────────────────────────────────────────────── -->
-  <div class="mode-bar">
+  <div class="mode-bar hidden">
     <button class="mode-btn active" data-mode="human">&#128100; Play</button>
     <button class="mode-btn"        data-mode="qlearning">&#129302; Watch Q-Learning</button>
     <button class="mode-btn"        data-mode="sarsa">&#129302; Watch SARSA</button>
@@ -23,7 +76,7 @@
   </div>
 
   <!-- ── Main content ───────────────────────────────────────────────────── -->
-  <main>
+  <main class="hidden">
 
     <!-- Game table (shown in human / AI watch modes) -->
     <section id="game-section">

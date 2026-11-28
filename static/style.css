@@ -29,6 +29,116 @@ html, body {
   color: var(--text);
 }
 
+/* ── Start page ───────────────────────────────────────────────────────────── */
+#start-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at 30% 20%, #1a3a1a 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 80%, #1a1a3a 0%, transparent 60%),
+    var(--bg);
+  padding: 32px 16px;
+}
+
+.start-inner {
+  max-width: 820px;
+  width: 100%;
+  text-align: center;
+}
+
+.start-suits {
+  font-size: 2.2rem;
+  letter-spacing: .3em;
+  margin-bottom: 16px;
+  opacity: .7;
+}
+/* colour the red suits */
+.start-suits { color: var(--text-dim); }
+
+.start-inner h1 {
+  font-size: 3rem;
+  letter-spacing: .2em;
+  color: var(--gold-light);
+  text-shadow: 0 2px 20px rgba(201,168,76,.4);
+  margin-bottom: 10px;
+}
+
+.start-tagline {
+  font-size: 1rem;
+  color: var(--text-dim);
+  font-style: italic;
+  letter-spacing: .08em;
+  margin-bottom: 36px;
+}
+
+.start-sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 18px;
+  margin-bottom: 36px;
+  text-align: left;
+}
+
+.start-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 20px;
+}
+
+.start-card h2 {
+  font-size: 1rem;
+  color: var(--gold);
+  letter-spacing: .08em;
+  margin-bottom: 14px;
+}
+
+.start-card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.start-card li {
+  font-size: .88rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+  padding-left: 14px;
+  position: relative;
+}
+
+.start-card li::before {
+  content: "›";
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+}
+
+.start-card li strong { color: var(--text); }
+
+.start-btn {
+  padding: 14px 44px;
+  background: var(--gold);
+  border: none;
+  border-radius: var(--radius);
+  color: #111;
+  font-size: 1.1rem;
+  font-weight: bold;
+  font-family: inherit;
+  letter-spacing: .1em;
+  cursor: pointer;
+  transition: background .2s, transform .15s;
+  box-shadow: 0 4px 20px rgba(201,168,76,.35);
+}
+
+.start-btn:hover {
+  background: var(--gold-light);
+  transform: translateY(-2px);
+}
+
 /* ── Header ───────────────────────────────────────────────────────────────── */
 header {
   text-align: center;

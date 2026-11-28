@@ -10,6 +10,15 @@
 
 "use strict";
 
+// ── Start page ────────────────────────────────────────────────────────────────
+
+document.getElementById("btn-start").addEventListener("click", () => {
+  document.getElementById("start-page").classList.add("hidden");
+  document.querySelector("header").classList.remove("hidden");
+  document.querySelector(".mode-bar").classList.remove("hidden");
+  document.querySelector("main").classList.remove("hidden");
+});
+
 // ── State ─────────────────────────────────────────────────────────────────────
 let currentMode   = "human";   // "human" | "qlearning" | "sarsa" | "results"
 let currentGameId = null;
