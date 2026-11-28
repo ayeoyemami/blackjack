@@ -1,0 +1,423 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blackjack</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        background: #0c3826;
+        border: 4px solid #9dbb68;
+        color: #f5f0d0;
+        font-family: Consolas, "Courier New", monospace;
+        font-weight: bold;
+        text-align: center;
+        margin: 0;
+        min-height: 100vh;
+        padding: 14px;
+    }
+
+    h1 {
+        color: #ffd700;
+        font-size: clamp(24px, 6vw, 42px);
+        letter-spacing: 5px;
+        margin: 10px 0 28px;
+        text-transform: uppercase;
+    }
+
+    h2 {
+        color: #d7f0a3;
+        font-size: 18px;
+        letter-spacing: 3px;
+        margin: 22px 0 10px;
+        text-transform: uppercase;
+    }
+
+    .hand-area {
+        max-width: 680px;
+        margin: 22px auto;
+        padding: 8px 12px;
+    }
+
+    .hand-area + .hand-area {
+        border-top: 1px solid #47745b;
+    }
+
+    .card {
+        display: inline-block;
+        width: 85px;
+        height: 120px;
+        border-radius: 0;
+        margin: 6px;
+        object-fit: contain;
+        vertical-align: middle;
+    }
+
+    img.card {
+        image-rendering: pixelated;
+    }
+
+    .fallback {
+        background: #f5f0d0;
+        color: #17251b;
+        display: grid;
+        place-items: center;
+        font-size: 30px;
+    }
+
+    .score {
+        display: inline-block;
+        color: #e6f3c9;
+        font-size: 18px;
+        margin: 12px 0 4px;
+        padding: 7px 12px;
+        background: #0c3826;
+    }
+
+    #message {
+        display: grid;
+        place-items: center;
+        min-height: 58px;
+        margin: 24px auto 16px;
+        padding: 10px;
+        color: #ffd700;
+        font-size: clamp(16px, 4vw, 22px);
+    }
+
+    button {
+        min-height: 52px;
+        border: 3px solid #f5f0d0;
+        border-radius: 0;
+        padding: 12px 20px;
+        margin: 6px;
+        font: inherit;
+        font-size: 15px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        cursor: pointer;
+        color: #f5f0d0;
+        background: #222;
+    }
+
+    button:hover:not(:disabled) {
+        filter: brightness(1.15);
+    }
+
+    button:focus-visible {
+        outline: 4px dashed #ffd700;
+        outline-offset: 5px;
+    }
+
+    button:disabled {
+        opacity: 0.45;
+        cursor: default;
+    }
+
+    #hit {
+        background: #2475bd;
+    }
+
+    #stand {
+        background: #b53636;
+    }
+
+    #newRound {
+        background: #ffd700;
+        color: #222;
+    }
+
+    @media (max-width: 480px) {
+        .card {
+            width: 68px;
+            height: 96px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<h1>BLACKJACK</h1>
+
+<section class="hand-area" aria-labelledby="dealerHeading">
+    <h2 id="dealerHeading">Dealer</h2>
+    <div id="dealerHand" class="hand"></div>
+    <p id="dealerScore" class="score"></p>
+</section>
+
+<section class="hand-area" aria-labelledby="playerHeading">
+    <h2 id="playerHeading">Player</h2>
+    <div id="playerHand" class="hand"></div>
+    <p id="playerScore" class="score"></p>
+</section>
+
+<div id="message" aria-live="polite"></div>
+
+<button id="hit" onclick="hit()">Hit</button>
+<button id="stand" onclick="stand()">Stand</button>
+<button id="newRound" onclick="newRound()">New Round</button>
+
+<script>
+
+const suits = ["S", "H", "D", "C"];
+
+const ranks = [
+    "A", "2", "3", "4", "5", "6", "7",
+    "8", "9", "10", "J", "Q", "K"
+];
+
+let deck = [];
+let player = [];
+let dealer = [];
+let roundOver = false;
+
+
+// Card image filename
+function cardImage(card) {
+    const suits = {
+        S: "spades",
+        H: "hearts",
+        D: "diamonds",
+        C: "clubs"
+    };
+
+    const ranks = {
+        A: "ace",
+        J: "jack",
+        Q: "queen",
+        K: "king"
+    };
+
+    return `cards/${ranks[card.rank] || card.rank}_of_${suits[card.suit]}.png`;
+}
+
+
+// Create a fresh 52-card deck
+function createDeck() {
+    deck = [];
+
+    for (const suit of suits) {
+        for (const rank of ranks) {
+            deck.push({ rank, suit });
+        }
+    }
+}
+
+
+// Fisher-Yates shuffle
+function shuffleDeck() {
+    for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+}
+
+
+// Draw one card
+function drawCard() {
+    return deck.pop();
+}
+
+
+// Calculate hand value
+function handValue(hand) {
+    let total = 0;
+    let aces = 0;
+
+    for (const card of hand) {
+        if (card.rank === "A") {
+            total += 11;
+            aces++;
+        } else if (["J", "Q", "K"].includes(card.rank)) {
+            total += 10;
+        } else {
+            total += Number(card.rank);
+        }
+    }
+
+    // Convert aces from 11 to 1 as needed
+    while (total > 21 && aces > 0) {
+        total -= 10;
+        aces--;
+    }
+
+    return total;
+}
+
+
+// Natural blackjack
+function isBlackjack(hand) {
+    return hand.length === 2 && handValue(hand) === 21;
+}
+
+
+// Render a hand
+function renderHand(elementId, hand, hideHoleCard = false) {
+    const container = document.getElementById(elementId);
+    container.innerHTML = "";
+
+    hand.forEach((card, index) => {
+
+        if (hideHoleCard && index === 1) {
+            const back = document.createElement("img");
+
+            back.className = "card";
+            back.src = "cards/back.png";
+            back.alt = "Hidden card";
+            container.appendChild(back);
+
+        } else {
+            const img = document.createElement("img");
+
+            img.className = "card";
+            img.alt = card.rank + card.suit;
+
+            // Text fallback if a PNG is missing
+            img.onerror = function () {
+                const fallback = document.createElement("div");
+                const symbols = {
+                    S: "♠",
+                    H: "♥",
+                    D: "♦",
+                    C: "♣"
+                };
+
+                fallback.className = "card fallback";
+                fallback.textContent =
+                    card.rank + symbols[card.suit];
+
+                if (["H", "D"].includes(card.suit)) {
+                    fallback.style.color = "red";
+                }
+
+                img.replaceWith(fallback);
+            };
+
+            img.src = cardImage(card);
+            container.appendChild(img);
+        }
+    });
+}
+
+
+// Update the table
+function render() {
+    renderHand("playerHand", player);
+    renderHand("dealerHand", dealer, !roundOver);
+
+    document.getElementById("playerScore").textContent =
+        "Total: " + handValue(player);
+
+    document.getElementById("dealerScore").textContent =
+        roundOver
+            ? "Total: " + handValue(dealer)
+            : "Showing: " + handValue([dealer[0]]);
+
+    document.getElementById("hit").disabled = roundOver;
+    document.getElementById("stand").disabled = roundOver;
+    document.getElementById("newRound").disabled = !roundOver;
+}
+
+
+// Display a message
+function message(text) {
+    document.getElementById("message").textContent = text;
+}
+
+
+// End the round
+function endRound(text) {
+    roundOver = true;
+    message(text);
+    render();
+}
+
+
+// Start a new round
+function newRound() {
+    player = [];
+    dealer = [];
+    roundOver = false;
+
+    // All cards returned and reshuffled
+    createDeck();
+    shuffleDeck();
+
+    // Initial deal
+    player.push(drawCard());
+    dealer.push(drawCard());
+    player.push(drawCard());
+    dealer.push(drawCard());
+
+    message("Hit or stand?");
+    render();
+
+    // Check initial blackjacks
+    const playerBJ = isBlackjack(player);
+    const dealerBJ = isBlackjack(dealer);
+
+    if (playerBJ && dealerBJ) {
+        endRound("Both blackjack! Push.");
+    } else if (playerBJ) {
+        endRound("Blackjack! You win!");
+    } else if (dealerBJ) {
+        endRound("Dealer blackjack! You lose.");
+    }
+}
+
+
+// Player hits
+function hit() {
+    if (roundOver) return;
+
+    player.push(drawCard());
+
+    const total = handValue(player);
+
+    if (total > 21) {
+        endRound("Bust! You lose.");
+    } else if (total === 21) {
+        stand();
+    } else {
+        render();
+    }
+}
+
+
+// Player stands
+function stand() {
+    if (roundOver) return;
+
+    // Dealer hits until reaching 17
+    while (handValue(dealer) < 17) {
+        dealer.push(drawCard());
+    }
+
+    const playerTotal = handValue(player);
+    const dealerTotal = handValue(dealer);
+
+    if (dealerTotal > 21) {
+        endRound("Dealer busts! You win!");
+    } else if (playerTotal > dealerTotal) {
+        endRound("You win!");
+    } else if (playerTotal < dealerTotal) {
+        endRound("Dealer wins!");
+    } else {
+        endRound("Push! It's a tie.");
+    }
+}
+
+
+// Start immediately
+newRound();
+
+</script>
+</body>
+</html>
