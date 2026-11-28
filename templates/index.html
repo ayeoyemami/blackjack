@@ -26,7 +26,7 @@
             <li>Cards 2–10 are worth their number. Face cards (J, Q, K) are worth <strong>10</strong>. Aces are worth <strong>1 or 11</strong>.</li>
             <li><strong>Hit</strong> to draw another card. <strong>Stand</strong> to keep your hand.</li>
             <li>Get closer to <strong>21</strong> than the dealer without going over.</li>
-            <li>Going over 21 is a <strong>bust</strong> — instant loss.</li>
+            <li>Going over 21 is a <strong>bust</strong> - instant loss.</li>
             <li>The dealer must draw until their hand is at least <strong>17</strong>.</li>
           </ul>
         </div>
@@ -36,7 +36,7 @@
           <h2>&#129302; The RL Agents</h2>
           <ul>
             <li>Two algorithms were trained to play: <strong>Q-Learning</strong> and <strong>SARSA</strong>.</li>
-            <li>Both explore the game state space — defined by the player's score, the dealer's upcard, and whether an Ace is high.</li>
+            <li>Both explore the game state space - defined by the player's score, the dealer's upcard, and whether an Ace is high.</li>
             <li><strong>Q-Learning</strong> (off-policy) learns the best possible action regardless of how it explores.</li>
             <li><strong>SARSA</strong> (on-policy) learns from the actions it actually takes while exploring.</li>
             <li>Each agent was trained for <strong>10 000 episodes</strong> and evaluated on <strong>5 000 games</strong>.</li>
@@ -47,10 +47,10 @@
         <div class="start-card">
           <h2>&#127918; What You Can Do</h2>
           <ul>
-            <li><strong>Play</strong> — test your own strategy against the house.</li>
-            <li><strong>Watch Q-Learning</strong> — see the trained Q-Learning agent play in real time.</li>
-            <li><strong>Watch SARSA</strong> — see the trained SARSA agent play in real time.</li>
-            <li><strong>Results</strong> — view the training statistics and win-rate learning curves.</li>
+            <li><strong>Play</strong> - test your own strategy against the house.</li>
+            <li><strong>Watch Q-Learning</strong> - see the trained Q-Learning agent play in real time.</li>
+            <li><strong>Watch SARSA</strong> - see the trained SARSA agent play in real time.</li>
+            <li><strong>Results</strong> - view the training statistics and win-rate learning curves.</li>
           </ul>
         </div>
 
@@ -130,7 +130,7 @@
         <span class="stat win">W <strong id="stat-w">0</strong></span>
         <span class="stat loss">L <strong id="stat-l">0</strong></span>
         <span class="stat push">P <strong id="stat-p">0</strong></span>
-        <span class="stat rate">Win rate <strong id="stat-rate">—</strong></span>
+        <span class="stat rate">Win rate <strong id="stat-rate">-</strong></span>
       </div>
 
     </section><!-- #game-section -->
@@ -140,7 +140,7 @@
 
       <h2>Experiment Results</h2>
       <p class="results-note">
-        From <code>train_agents.py</code> — 10 000 training episodes,
+        From <code>train_agents.py</code> - 10 000 training episodes,
         5 000 evaluation episodes, averaged over 3 random seeds.
       </p>
 

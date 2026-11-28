@@ -1,5 +1,5 @@
 /**
- * script.js — Blackjack RL frontend
+ * script.js - Blackjack RL frontend
  *
  * Responsibilities:
  *   - Mode switching (Human / Watch Q-Learning / Watch SARSA / Results)
@@ -136,7 +136,7 @@ function renderHand(container, cards, hideFirst = false) {
 
 function showOutcome(result, message) {
   const labels = { win: "★ WIN ★", loss: "✗ LOSS", push: "↔ PUSH" };
-  outcomeBanner.textContent = `${labels[result] ?? result}  —  ${message}`;
+  outcomeBanner.textContent = `${labels[result] ?? result}  -  ${message}`;
   outcomeBanner.className   = `outcome-banner ${result}`;
   outcomeBanner.classList.remove("hidden");
 }
@@ -188,7 +188,7 @@ function updateStats(result) {
   const total = stats.win + stats.loss + stats.push;
   statRate.textContent = total
     ? `${((stats.win / total) * 100).toFixed(1)}%`
-    : "—";
+    : "-";
 }
 
 // ── Reset board ───────────────────────────────────────────────────────────────

@@ -25,7 +25,7 @@ import random
 import sys
 import uuid
 
-from flask import Flask, jsonify, render_template, request, session
+from flask import Flask, jsonify, render_template, request
 
 # Make the teammates' modules importable
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
@@ -142,7 +142,7 @@ class GameSession:
         if p21 and d21:
             self.done    = True
             self.result  = "push"
-            self.message = "Push — both have blackjack"
+            self.message = "Push - both have blackjack"
         elif p21:
             self.done    = True
             self.result  = "win"
@@ -165,13 +165,13 @@ class GameSession:
             self.message = f"Dealer busts ({d})!"
         elif p > d:
             self.result  = "win"
-            self.message = f"Win — {p} vs {d}"
+            self.message = f"Win - {p} vs {d}"
         elif p < d:
             self.result  = "loss"
-            self.message = f"Loss — {p} vs {d}"
+            self.message = f"Loss - {p} vs {d}"
         else:
             self.result  = "push"
-            self.message = f"Push — {p}"
+            self.message = f"Push - {p}"
 
         self.done = True
 
@@ -194,7 +194,7 @@ def _train_agent(cls, episodes: int = 8_000) -> QLearningAgent:
     agent = cls(alpha=0.1, gamma=0.9, epsilon=0.1)
     agent.training = True
 
-    # Inline game loop (same as train_agents.py) — avoids importing Game
+    # Inline game loop (same as train_agents.py) - avoids importing Game
     # so that we keep the import surface minimal
     from Game import Game
     for i in range(episodes):
